@@ -11,6 +11,7 @@ const pb = new PocketBase('https://ecommerce.choniki.tk');
 import Home from "./pages/Home";
 import Join from "./pages/Join";
 import Cart from "./pages/Cart";
+import Checkouts from "./pages/Checkouts";
 
 function App() {
   const [count, setCount] = useState(0)
@@ -27,6 +28,7 @@ function App() {
         <Route index element={<Home />} />
         <Route path="join" element={<Join />} />
         <Route path="cart" element={<Cart />} />
+        <Route path="checkouts" element={<Checkouts />} />
       </Routes>
 
     </BrowserRouter>

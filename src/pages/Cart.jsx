@@ -5,7 +5,7 @@ import PocketBase from 'pocketbase';
 
 const pb = new PocketBase('https://ecommerce.choniki.tk');
 
-function Home() {
+function Cart() {
     const id_user = pb.authStore.model.id
 
     useEffect(() => {
@@ -147,10 +147,10 @@ function Home() {
 
             <div>
                 <h2>Total: {totalHarga}</h2>
-                <button>Beli</button>
+                <Link to='checkouts'>Beli</Link>
             </div>
         </>
     )
 }
 
-export default Home
+export default Cart
