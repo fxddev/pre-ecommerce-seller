@@ -22,6 +22,7 @@ function Checkouts() {
         const funcAsyncTrigger = async () => {
             await getAlamat()
             await getCartSelected()
+            await getCartSelectedDetails()
         }
 
         // call the function
@@ -106,6 +107,10 @@ function Checkouts() {
             <div>
                 <h3>{alamat.alamat}</h3>
                 <p>{alamat.nomor_hp}</p>
+            </div>
+
+            <div>
+
             </div>
         </>
     )
