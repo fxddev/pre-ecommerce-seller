@@ -26,7 +26,7 @@ function Checkouts() {
             await getAlamat()
             await getCartSelected()
             await getCartSelectedDetails()
-            await getCitys()
+            await getCost()
         }
 
         // call the function
@@ -34,6 +34,7 @@ function Checkouts() {
 
     }, []);
 
+    let city_id
     const [alamat, setAlamat] = useState({});
     async function getAlamat() {
         const record = await pb.collection('pembeli').getOne(id_user, {
@@ -41,6 +42,9 @@ function Checkouts() {
         });
 
         console.log(record.alamat[0]);
+
+        console.log(record.alamat[0].origin.city_id);
+        city_id = record.alamat[0].origin.city_id
 
         setAlamat(record.alamat[0])
     }
@@ -105,18 +109,63 @@ function Checkouts() {
         setCartSelectedDetails(array)
     }
 
-    async function getCitys(){
+    let ongkir = [];
+    async function getCost(){
+        const obj = {
+            origin: city_id,
+            destination: "154", //jakartaTimur
+            weight: "500",
+            courier: "jne",
+        };
+        var payload = JSON.stringify(obj);
         var config = {
             method: "post",
-            url: `${rajaongkir_api}/rajaongkir/city`,
+            url: `${rajaongkir_api}/rajaongkir/cost`,
+            headers: {
+                "Content-Type": "application/json",
+            },
+            data: payload,
         };
+
         try {
             const resp = await axios(config);
             const data = await resp.data;
             console.log(data);
+            const res = data.data.rajaongkir.results;
+            console.log("res");
+            console.log(res);
+            console.log("res.length");
+            console.log(res.length);
+            for (let index = 0; index < res.length; index++) {
+                const costs = res[index].costs;
+                // console.log("costs");
+                // console.log(costs);
+                for (let j = 0; j < costs.length; j++) {
+                    const obj = {
+                        code: res[index].code,
+                        name: res[index].name,
+                        service: costs[j].service,
+                        description: costs[j].description,
+                        value: costs[j].cost[0].value,
+                        etd: costs[j].cost[0].etd,
+                        note: costs[j].cost[0].note,
+                    };
+                    ongkir.push(obj);
+                }
+                // ongkir.push(res[index]);
+                // console.log("res[index]");
+                // console.log(res[index]);
+                console.log("ongkir");
+                console.log(ongkir);
+            }
+            return res;
         } catch (error) {
             console.error(`Axios error..: ${error}`);
         }
+    }
+
+    async function pilihKurir() {
+        console.log("ini pil kur");
     }
 
     return (
@@ -135,7 +184,7 @@ function Checkouts() {
                 ))}
             </div>
 
-            <select id="cars" name="cars">
+            <select onClick={pilihKurir}>
                 <option value="volvo">pilih kurir</option>
                 <option value="saab">Saab</option>
                 <option value="fiat">Fiat</option>
