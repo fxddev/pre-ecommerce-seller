@@ -22,7 +22,7 @@ function Join() {
         if (pb.authStore.isValid) {
             navigate("/");
         }
-        
+
         getAllPembeliUser()
 
         // async function tes1() {
@@ -105,6 +105,8 @@ function Join() {
         console.log(isTerdaftarViaEmail);
 
         if (isTerdaftarViaUsername || isTerdaftarViaEmail) {
+            console.log("sedang login");
+
             let authData
             if (isTerdaftarViaUsername) {
                 authData = await pb.collection('pembeli').authWithPassword(
@@ -120,7 +122,10 @@ function Join() {
             console.log("authData");
             console.log(authData);
 
+            navigate("/");
+
         } else {
+            console.log("sedang daftar");
 
             const alamat = [
                 {
@@ -141,6 +146,18 @@ function Join() {
             console.log(data);
 
             const record = await pb.collection('pembeli').create(data);
+
+            console.log("record");
+            console.log(record);
+
+            const authData = await pb.collection('pembeli').authWithPassword(
+                username,
+                password,
+            );
+            console.log("authData");
+            console.log(authData);
+
+            navigate("/");
         }
         // console.log("record");
         // console.log(record);

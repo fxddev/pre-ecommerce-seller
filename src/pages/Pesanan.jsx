@@ -5,12 +5,12 @@ import PocketBase from 'pocketbase';
 
 const pb = new PocketBase('https://ecommerce.choniki.tk');
 
-function Checkouts() {
+function Pesanan() {
     const navigate = useNavigate();
 
     const is_valid = pb.authStore.isValid
 
-    let id_user
+    let id_user    
 
     useEffect(() => {
         if (is_valid) {
@@ -32,9 +32,9 @@ function Checkouts() {
 
     return (
         <>
-            <p>Ini Hal checkouts</p>
+            <p>Ini Hal pesanan</p>
         </>
     )
 }
 
-export default Checkouts
+export default Pesanan

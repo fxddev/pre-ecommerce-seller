@@ -12,6 +12,8 @@ import Home from "./pages/Home";
 import Join from "./pages/Join";
 import Cart from "./pages/Cart";
 import Checkouts from "./pages/Checkouts";
+import Pesanan from "./pages/Pesanan";
+import Profile from "./pages/Profile";
 
 function App() {
   const [count, setCount] = useState(0)
@@ -21,7 +23,7 @@ function App() {
       <Link to='/'>Home </Link>
 
       {pb.authStore.isValid == false &&
-        <Link to='join'>Join</Link>
+        <Link to='/join'>Join</Link>
       }
 
       <Routes>
@@ -29,6 +31,8 @@ function App() {
         <Route path="join" element={<Join />} />
         <Route path="cart" element={<Cart />} />
         <Route path="checkouts" element={<Checkouts />} />
+        <Route path="pesanan" element={<Pesanan />} />
+        <Route path="profile" element={<Profile />} />
       </Routes>
 
     </BrowserRouter>

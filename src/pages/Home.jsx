@@ -1,12 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import PocketBase from 'pocketbase';
 
 const pb = new PocketBase('https://ecommerce.choniki.tk');
 
 function Home() {
-    const id_user = pb.authStore.model.id
+    const navigate = useNavigate();
+
+    const is_valid = pb.authStore.isValid
+
+    let id_user
+    if (is_valid) {
+        id_user = pb.authStore.model.id
+    }
+    // const id_user = pb.authStore.model.id
 
     const [products, setProducts] = useState([]);
     async function getProducts() {
@@ -56,71 +64,81 @@ function Home() {
         // console.log(pb.authStore.model.id);
 
         getProducts()
-        getCartsById()
+        // getCartsById()
     }, []);
 
     function logOut() {
         pb.authStore.clear();
+        window.location.reload(false);
     }
 
     async function buyHandle(id_product) {
-        console.log("id_product");
-        console.log(id_product);
 
-        await getCartsById()
-        console.log("carts");
-        console.log(carts);
+        if (is_valid) {
 
-        for (let i = 0; i < carts.length; i++) {
-            if (carts[i].id_products == id_product) {
-                console.log("carts[i].id_products update");
-                console.log(carts[i].id_products);
+            console.log("id_product");
+            console.log(id_product);
 
-                const data = {
-                    "id_products": carts[i].id_products,
-                    "id_pembeli": carts[i].id_pembeli,
-                    "jumlah": carts[i].jumlah + 1,
-                    "is_selected": true
-                };
+            await getCartsById()
+            console.log("carts");
+            console.log(carts);
 
-                const record = await pb.collection('keranjang').update(carts[i].id, data);
-                console.log("record cart update");
-                console.log(record);
-
-                break;
-            } else {
-                console.log(`posisi carts ke ${i + 1}/${carts.length}`);
-                if ((i + 1) === carts.length) {
-                    console.log("carts[i].id_products create");
+            for (let i = 0; i < carts.length; i++) {
+                if (carts[i].id_products == id_product) {
+                    console.log("carts[i].id_products update");
                     console.log(carts[i].id_products);
 
                     const data = {
-                        "id_products": id_product,
-                        "id_pembeli": id_user,
-                        "jumlah": 1,
+                        "id_products": carts[i].id_products,
+                        "id_pembeli": carts[i].id_pembeli,
+                        "jumlah": carts[i].jumlah + 1,
                         "is_selected": true
                     };
 
-                    const record = await pb.collection('keranjang').create(data);
-                    console.log("record cart create");
+                    const record = await pb.collection('keranjang').update(carts[i].id, data);
+                    console.log("record cart update");
                     console.log(record);
+
+                    break;
+                } else {
+                    console.log(`posisi carts ke ${i + 1}/${carts.length}`);
+                    if ((i + 1) === carts.length) {
+                        console.log("carts[i].id_products create");
+                        console.log(carts[i].id_products);
+
+                        const data = {
+                            "id_products": id_product,
+                            "id_pembeli": id_user,
+                            "jumlah": 1,
+                            "is_selected": true
+                        };
+
+                        const record = await pb.collection('keranjang').create(data);
+                        console.log("record cart create");
+                        console.log(record);
+                    }
                 }
             }
-        }
 
+        } else {
+            navigate("/join");
+        }
 
     }
 
     return (
         <>
             <div>
-                <Link to='cart'>Cart </Link>
-                <Link to='pesanan'>Pesanan </Link>
+                <Link to='/cart'>Cart </Link>
+                <Link to='/pesanan'>Pesanan </Link>
                 {pb.authStore.isValid == false &&
-                    <Link to='join'>Join</Link>
+                    <Link to='/join'>Join</Link>
                 }
                 {pb.authStore.isValid == true &&
-                    <button onClick={logOut}>Logout</button>
+                    <>
+                        <Link to='/profile'>Profile</Link>
+                        <button onClick={logOut}>Logout</button>
+                    </>
                 }
             </div>
 

@@ -1,14 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import PocketBase from 'pocketbase';
 
 const pb = new PocketBase('https://ecommerce.choniki.tk');
 
 function Cart() {
-    const id_user = pb.authStore.model.id
+    const navigate = useNavigate();
+
+    const is_valid = pb.authStore.isValid
+
+    let id_user
 
     useEffect(() => {
+        if (is_valid) {
+            id_user = pb.authStore.model.id
+        } else {
+            navigate("/join");
+        }
 
         const funcAsyncTrigger = async () => {
             await getCartById()
@@ -147,7 +156,7 @@ function Cart() {
 
             <div>
                 <h2>Total: {totalHarga}</h2>
-                <Link to='checkouts'>Beli</Link>
+                <Link to='/checkouts'>Beli</Link>
             </div>
         </>
     )
