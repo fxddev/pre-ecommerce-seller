@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 
 import PocketBase from 'pocketbase';
@@ -6,6 +7,8 @@ import PocketBase from 'pocketbase';
 const pb = new PocketBase('https://ecommerce.choniki.tk');
 
 function Checkouts() {
+    const rajaongkir_api = "https://8000-fahmidabdil-rajaongkira-vqj3ndw31j4.ws-us80.gitpod.io"
+
     const navigate = useNavigate();
 
     const is_valid = pb.authStore.isValid
@@ -23,15 +26,16 @@ function Checkouts() {
             await getAlamat()
             await getCartSelected()
             await getCartSelectedDetails()
+            await getCitys()
         }
 
         // call the function
-        funcAsyncTrigger()        
+        funcAsyncTrigger()
 
     }, []);
 
     const [alamat, setAlamat] = useState({});
-    async function getAlamat(){
+    async function getAlamat() {
         const record = await pb.collection('pembeli').getOne(id_user, {
             expand: 'relField1,relField2.subRelField',
         });
@@ -43,7 +47,7 @@ function Checkouts() {
 
     let cart_selected_by_id = []
     const [cartById, setCartById] = useState([]);
-    async function getCartSelected(){
+    async function getCartSelected() {
         const records = await pb.collection('keranjang').getFullList(200 /* batch size */, {
             sort: '-created',
         });
@@ -73,7 +77,7 @@ function Checkouts() {
     }
 
     const [cartSelectedDetails, setCartSelectedDetails] = useState([]);
-    async function getCartSelectedDetails(){
+    async function getCartSelectedDetails() {
         console.log("cart_selected_by_id");
         console.log(cart_selected_by_id);
 
@@ -101,6 +105,19 @@ function Checkouts() {
         setCartSelectedDetails(array)
     }
 
+    async function getCitys(){
+        var config = {
+            method: "post",
+            url: `${rajaongkir_api}/rajaongkir/city`,
+        };
+        try {
+            const resp = await axios(config);
+            const data = await resp.data;
+            console.log(data);
+        } catch (error) {
+            console.error(`Axios error..: ${error}`);
+        }
+    }
 
     return (
         <>
@@ -110,8 +127,20 @@ function Checkouts() {
             </div>
 
             <div>
-
+                {cartSelectedDetails.map((cs) => (
+                    <div key={cs.id}>
+                        <h3>{cs.product_details.nama}</h3>
+                        <h3>{cs.jumlah}x {cs.product_details.harga}</h3>
+                    </div>
+                ))}
             </div>
+
+            <select id="cars" name="cars">
+                <option value="volvo">pilih kurir</option>
+                <option value="saab">Saab</option>
+                <option value="fiat">Fiat</option>
+                <option value="audi">Audi</option>
+            </select>
         </>
     )
 }
