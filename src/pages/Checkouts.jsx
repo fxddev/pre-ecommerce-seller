@@ -81,11 +81,14 @@ function Checkouts() {
     }
 
     const [cartSelectedDetails, setCartSelectedDetails] = useState([]);
+    // const [hargaSemuaBarang, setHargaSemuaBarang] = useState(0);
+    let harga_semua_barang = 0
     async function getCartSelectedDetails() {
         console.log("cart_selected_by_id");
         console.log(cart_selected_by_id);
 
         let array = []
+        let harga_total = 0
         for (let i = 0; i < cart_selected_by_id.length; i++) {
             const record = await pb.collection('products').getOne(cart_selected_by_id[i].id_products, {
                 expand: 'relField1,relField2.subRelField',
@@ -103,10 +106,22 @@ function Checkouts() {
             array.push(obj)
             // cart_details = array
             // setCartDetails(array)
+
+            console.log("record.harga");
+            console.log(record.harga);
+            const harga = harga_total + record.harga
+            harga_total = harga
+            // setHargaTotal(harga_total)
+
+            // setHargaSemuaBarang(harga_total)
         }
         console.log("array dari getCartSelectedDetails");
         console.log(array);
         setCartSelectedDetails(array)
+
+        harga_semua_barang = harga_total
+
+        hargaTotalHandle()
     }
 
     const [kurirList, setKurirList] = useState([]);
@@ -167,12 +182,24 @@ function Checkouts() {
     }
 
     const [kurirSelected, setKurirSelected] = useState({});
+    // const [hargaKurir, setHargaKurir] = useState(0);
+    let harga_kurir = 0
     async function pilihKurir(event) {
         console.log("ini pil kur");
         // console.log(event);
-        console.log(event.target.value);
+
+        const obj = JSON.parse(event.target.value)
+        console.log(obj);
+
+        // console.log(obj.value);
+        // const harga = harga_total + obj.value
+        // harga_total = harga
+        // setHargaKurir(obj.value)
+        harga_kurir = obj.value
 
         setKurirSelected(event.target.value)
+
+        hargaTotalHandle()
     }
 
     const [paymentSelected, setPaymentSelected] = useState("");
@@ -181,6 +208,17 @@ function Checkouts() {
         console.log(event.target.value);
 
         setPaymentSelected(event.target.value)
+    }
+
+    const [hargaTotal, setHargaTotal] = useState(0);
+    function hargaTotalHandle(){
+        console.log("sedang total hargaBarang+Kurir");
+
+        console.log(harga_semua_barang+harga_kurir);
+        setHargaTotal(harga_semua_barang+harga_kurir)
+
+        // console.log(hargaKurir+hargaSemuaBarang);
+        // setHargaTotal(hargaKurir+hargaSemuaBarang)
     }
 
     return (
@@ -214,7 +252,7 @@ function Checkouts() {
             <div>
                 <div>
                     <h3>Total Harga</h3>
-                    <p></p>
+                    <p>{hargaTotal}</p>
                 </div>
             </div>
         </>
