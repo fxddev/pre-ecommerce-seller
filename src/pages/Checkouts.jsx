@@ -109,8 +109,8 @@ function Checkouts() {
         setCartSelectedDetails(array)
     }
 
-    let ongkir = [];
-    async function getCost(){
+    const [kurirList, setKurirList] = useState([]);
+    async function getCost() {
         const obj = {
             origin: city_id,
             destination: "154", //jakartaTimur
@@ -136,6 +136,8 @@ function Checkouts() {
             console.log(res);
             console.log("res.length");
             console.log(res.length);
+
+            let ongkir = [];
             for (let index = 0; index < res.length; index++) {
                 const costs = res[index].costs;
                 // console.log("costs");
@@ -158,14 +160,27 @@ function Checkouts() {
                 console.log("ongkir");
                 console.log(ongkir);
             }
-            return res;
+            setKurirList(ongkir)
         } catch (error) {
             console.error(`Axios error..: ${error}`);
         }
     }
 
-    async function pilihKurir() {
+    const [kurirSelected, setKurirSelected] = useState({});
+    async function pilihKurir(event) {
         console.log("ini pil kur");
+        // console.log(event);
+        console.log(event.target.value);
+
+        setKurirSelected(event.target.value)
+    }
+
+    const [paymentSelected, setPaymentSelected] = useState("");
+    function pilihPayment(event) {
+        console.log("pilihPayment");
+        console.log(event.target.value);
+
+        setPaymentSelected(event.target.value)
     }
 
     return (
@@ -184,12 +199,24 @@ function Checkouts() {
                 ))}
             </div>
 
+
             <select onClick={pilihKurir}>
-                <option value="volvo">pilih kurir</option>
-                <option value="saab">Saab</option>
-                <option value="fiat">Fiat</option>
-                <option value="audi">Audi</option>
+                <option disabled selected>pilih kurir</option>
+                {kurirList.map((kl, index) => (
+                    <option value={JSON.stringify(kl)}>{kl.code} {kl.service} | Rp.{kl.value} | {kl.etd}Hari</option>
+                ))}
             </select>
+
+            <select onClick={pilihPayment}>
+                <option value="bri" selected>BRI</option>
+            </select>
+
+            <div>
+                <div>
+                    <h3>Total Harga</h3>
+                    <p></p>
+                </div>
+            </div>
         </>
     )
 }
