@@ -8,6 +8,7 @@ const pb = new PocketBase('https://ecommerce.choniki.tk');
 
 function Checkouts() {
     const rajaongkir_api = "https://8000-fahmidabdil-rajaongkira-vqj3ndw31j4.ws-us80.gitpod.io"
+    const midtrans_api = "https://8000-fahmidabdil-midtransapi-vakferl6soy.ws-us80.gitpod.io"
 
     const navigate = useNavigate();
 
@@ -36,6 +37,7 @@ function Checkouts() {
 
     let city_id
     const [alamat, setAlamat] = useState({});
+    const [userInfo, setUserInfo] = useState({});
     async function getAlamat() {
         const record = await pb.collection('pembeli').getOne(id_user, {
             expand: 'relField1,relField2.subRelField',
@@ -47,6 +49,10 @@ function Checkouts() {
         city_id = record.alamat[0].origin.city_id
 
         setAlamat(record.alamat[0])
+
+        console.log("record getAlamat");
+        console.log(record);
+        setUserInfo(record)
     }
 
     let cart_selected_by_id = []
@@ -81,7 +87,7 @@ function Checkouts() {
     }
 
     const [cartSelectedDetails, setCartSelectedDetails] = useState([]);
-    // const [hargaSemuaBarang, setHargaSemuaBarang] = useState(0);
+    const [hargaSemuaBarang, setHargaSemuaBarang] = useState(0);
     let harga_semua_barang = 0
     async function getCartSelectedDetails() {
         console.log("cart_selected_by_id");
@@ -113,12 +119,12 @@ function Checkouts() {
             harga_total = harga
             // setHargaTotal(harga_total)
 
-            // setHargaSemuaBarang(harga_total)
         }
         console.log("array dari getCartSelectedDetails");
         console.log(array);
         setCartSelectedDetails(array)
 
+        setHargaSemuaBarang(harga_total)
         harga_semua_barang = harga_total
 
         hargaTotalHandle()
@@ -211,14 +217,95 @@ function Checkouts() {
     }
 
     const [hargaTotal, setHargaTotal] = useState(0);
-    function hargaTotalHandle(){
-        console.log("sedang total hargaBarang+Kurir");
+    function hargaTotalHandle() {
 
-        console.log(harga_semua_barang+harga_kurir);
-        setHargaTotal(harga_semua_barang+harga_kurir)
+        if (harga_semua_barang != 0) {
+            console.log("sedang total harga_semua_barang+Kurir");
+            console.log(`${harga_semua_barang} + ${harga_kurir} = ${harga_semua_barang + harga_kurir}`);
+            setHargaTotal(harga_semua_barang + harga_kurir)
+        } else {
+            console.log("sedang total hargaSemuaBarang+Kurir");
+            console.log(`${hargaSemuaBarang} + ${harga_kurir} = ${hargaSemuaBarang + harga_kurir}`);
+            setHargaTotal(hargaSemuaBarang + harga_kurir)
+        }
 
         // console.log(hargaKurir+hargaSemuaBarang);
         // setHargaTotal(hargaKurir+hargaSemuaBarang)
+    }
+
+    async function buatPesanan() {
+
+        let r = (Math.random() + 1).toString(36).substring(7);
+        // console.log("random", r.toUpperCase());
+
+        const d = new Date();
+        let month = d.getMonth();
+        let day = d.getDate()
+        let year = d.getFullYear();
+        let no_invoice = ""
+        no_invoice = `INV/${day}${month}${year}/ID/${r.toUpperCase()}`;
+
+        console.log(userInfo);
+        const customer_details = {
+            "email": userInfo.email,
+            "first_name": userInfo.nama,
+            "last_name": userInfo.nama,
+            "phone": userInfo.alamat[0].nomor_hp
+        }
+
+        console.log(cartSelectedDetails);
+        let item_details = []
+        for (let i = 0; i < cartSelectedDetails.length; i++) {
+            const obj = {
+                "id": cartSelectedDetails[i].product_details.id,
+                "price": cartSelectedDetails[i].product_details.harga,
+                "quantity": cartSelectedDetails[i].jumlah,
+                "name": cartSelectedDetails[i].product_details.nama
+            } 
+            item_details.push(obj)  
+        }    
+        
+        console.log("kurirSelected");
+        console.log(kurirSelected);
+
+        const payload = {
+            "payment_type": "bank_transfer",
+            "transaction_details": {
+                "gross_amount": parseInt(hargaTotal),
+                "order_id": no_invoice
+            },
+            "customer_details": customer_details,
+            "item_details": [
+                {
+                    "id": "2",
+                    "price": 5000,
+                    "quantity": 1,
+                    "name": "Buku"
+                },
+                {
+                    "code": "jne",
+                    "price": 5000,
+                    "quantity": 1,
+                    "name": "YES"
+                }
+            ],
+            "bank_transfer": {
+                "bank": "bri",
+                "va_number": "08158266887"
+            }
+        }
+
+        var data = JSON.stringify(payload);
+        console.log(data);
+
+        var config = {
+            method: 'post',
+            url: `${midtrans_api}/midtrans/bayar`,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: data
+        };
     }
 
     return (
@@ -254,6 +341,7 @@ function Checkouts() {
                     <h3>Total Harga</h3>
                     <p>{hargaTotal}</p>
                 </div>
+                <button onClick={buatPesanan}>Buat Pesanan</button>
             </div>
         </>
     )
