@@ -48,6 +48,9 @@ function Checkouts() {
         console.log(record.alamat[0].origin.city_id);
         city_id = record.alamat[0].origin.city_id
 
+        console.log("record.id")
+        console.log(record.id)
+
         setAlamat(record.alamat[0])
 
         console.log("record getAlamat");
@@ -217,6 +220,7 @@ function Checkouts() {
     }
 
     const [hargaTotal, setHargaTotal] = useState(0);
+    const [isKurirSelected, setIsKurirSelected] = useState(false);
     function hargaTotalHandle() {
 
         if (harga_semua_barang != 0) {
@@ -227,25 +231,126 @@ function Checkouts() {
             console.log("sedang total hargaSemuaBarang+Kurir");
             console.log(`${hargaSemuaBarang} + ${harga_kurir} = ${hargaSemuaBarang + harga_kurir}`);
             setHargaTotal(hargaSemuaBarang + harga_kurir)
+
+            setIsKurirSelected(true)
         }
 
         // console.log(hargaKurir+hargaSemuaBarang);
         // setHargaTotal(hargaKurir+hargaSemuaBarang)
     }
 
+    const [isProsesBuatPesanan, setIsProsesBuatPesanan] = useState(false);
     async function buatPesanan() {
+        setIsProsesBuatPesanan(true)
 
         const bayar_midtrans = bayarMidtrans();
-        bayar_midtrans.then((val) => {
+        bayar_midtrans.then(async (val) => {
             console.log("val dari bayar_midtrans");
             console.log(val);
 
-            
+            var get_midtrans_res = localStorage.getItem("midtrans_response");
+
+            const midtrans_response = val
+            if (get_midtrans_res == null) {
+                localStorage.setItem("midtrans_response", JSON.stringify(midtrans_response));
+            }
+
+            console.log(cartSelectedDetails);
+            let product_details = []
+            for (let i = 0; i < cartSelectedDetails.length; i++) {
+                const obj = {
+                    "id": cartSelectedDetails[i].product_details.id,
+                    "nama": cartSelectedDetails[i].product_details.nama,
+                    "harga": cartSelectedDetails[i].product_details.harga,
+                    "jumlah": cartSelectedDetails[i].jumlah
+                }
+                product_details.push(obj)
+            }
+
+            let kurir = {};
+            console.log("kurirSelected");
+            console.log(kurirSelected);
+            const kurirSelected_parse = JSON.parse(kurirSelected)
+            const obj_ks = {
+                "name": `${kurirSelected_parse.code.toUpperCase()} ${kurirSelected_parse.service}`,
+                "price": parseInt(kurirSelected_parse.value),
+                "quantity": 1,
+                "name": kurirSelected_parse.service
+            }
+            kurir = obj_ks
+
+            const data = {
+                "id_pembeli": userInfo.id,
+                "product_details": product_details,
+                "kurir": kurir,
+                "alamat_tujuan": userInfo.alamat[0],
+                "midtrans_response": midtrans_response,
+                "is_proses": false,
+                "no_resi": "",
+                "is_selesai": false
+            };
+            console.log("data buatPesanan");
+            console.log(data);
+
+            const record = await pb.collection('pesanan').create(data);
+            console.log("record buatPesanan");
+            console.log(record);   
+
+            for (let j = 0; j < cartById.length; j++) {
+                console.log(`sedang hapus keranjang id=${cartById[j].id}`);
+                await pb.collection('keranjang').delete(cartById[j].id);
+            }
+
+            setIsProsesBuatPesanan(false)
+            navigate("/pesanan");
+            localStorage.removeItem("midtrans_response");
+
+            // const obj = {
+            //     id_pembeli: id_user,
+            //     product_details: product_details,
+            //     kurir: kurir,
+            //     alamat_tujuan: userInfo.alamat[0],
+            //     midtrans_response: midtrans_response,
+            //     is_proses: false,
+            //     no_resi: "",
+            //     is_selesai: false
+            // };
+            // var payload = JSON.stringify(obj);
+            // console.log("payload createPesanan");
+            // console.log(payload);
+
+            // var config = {
+            //     method: "post",
+            //     url: `${api_url}/pesanan/create`,
+            //     headers: {
+            //         "Content-Type": "application/json",
+            //     },
+            //     data: payload,
+            // };
+            // try {
+            //     const resp = await axios(config);
+            //     const data = await resp.data;
+            //     console.log(data);
+            // } catch (error) {
+            //     console.error(`Axios error..: ${error}`);
+            // }
 
         });
     }
 
     async function bayarMidtrans() {
+
+        var get_midtrans_res = localStorage.getItem("midtrans_response");
+        console.log("get_midtrans_res from localStorage");
+        console.log(get_midtrans_res);
+
+        if (get_midtrans_res != null) {
+            const midtrans_res = JSON.stringify(get_midtrans_res)
+            console.log("midtrans_res from localStorage");
+            console.log(midtrans_res);
+            console.log(get_midtrans_res);
+            return midtrans_res
+        }
 
         let r = (Math.random() + 1).toString(36).substring(7);
         // console.log("random", r.toUpperCase());
@@ -369,7 +474,19 @@ function Checkouts() {
                     <h3>Total Harga</h3>
                     <p>{hargaTotal}</p>
                 </div>
-                <button onClick={buatPesanan}>Buat Pesanan</button>
+
+                {isKurirSelected ?
+                    <>
+                        {isProsesBuatPesanan ?
+                            <button>Loading..</button>
+                            :
+                            <button onClick={buatPesanan}>Buat Pesanan</button>
+                        }
+                    </>
+                    :
+                    <button disabled >Buat Pesanan</button>
+                }
+
             </div>
         </>
     )
