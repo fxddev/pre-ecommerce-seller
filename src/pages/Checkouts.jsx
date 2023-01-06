@@ -7,8 +7,8 @@ import PocketBase from 'pocketbase';
 const pb = new PocketBase('https://ecommerce.choniki.tk');
 
 function Checkouts() {
-    const rajaongkir_api = "https://8000-fahmidabdil-rajaongkira-vqj3ndw31j4.ws-us80.gitpod.io"
-    const midtrans_api = "https://8000-fahmidabdil-midtransapi-vakferl6soy.ws-us80.gitpod.io"
+    const rajaongkir_api = "https://8000-fahmidabdil-rajaongkira-vqj3ndw31j4.ws-us81.gitpod.io"
+    const midtrans_api = "https://8000-fahmidabdil-midtransapi-vakferl6soy.ws-us81.gitpod.io"
 
     const navigate = useNavigate();
 
@@ -267,6 +267,17 @@ function Checkouts() {
         
         console.log("kurirSelected");
         console.log(kurirSelected);
+        const kurirSelected_parse = JSON.parse(kurirSelected)
+        console.log(kurirSelected_parse.code);
+
+        const obj_ks = {
+            "code": kurirSelected_parse.code,
+            "price": parseInt(kurirSelected_parse.value),
+            "quantity": 1,
+            "name": kurirSelected_parse.service
+        }
+        item_details.push(obj_ks)
+        
 
         const payload = {
             "payment_type": "bank_transfer",
@@ -275,23 +286,10 @@ function Checkouts() {
                 "order_id": no_invoice
             },
             "customer_details": customer_details,
-            "item_details": [
-                {
-                    "id": "2",
-                    "price": 5000,
-                    "quantity": 1,
-                    "name": "Buku"
-                },
-                {
-                    "code": "jne",
-                    "price": 5000,
-                    "quantity": 1,
-                    "name": "YES"
-                }
-            ],
+            "item_details": item_details,
             "bank_transfer": {
                 "bank": "bri",
-                "va_number": "08158266887"
+                "va_number": userInfo.alamat[0].nomor_hp.toString()
             }
         }
 
