@@ -304,37 +304,7 @@ function Checkouts() {
             setIsProsesBuatPesanan(false)
             navigate("/pesanan");
             localStorage.removeItem("midtrans_response");
-
-            // const obj = {
-            //     id_pembeli: id_user,
-            //     product_details: product_details,
-            //     kurir: kurir,
-            //     alamat_tujuan: userInfo.alamat[0],
-            //     midtrans_response: midtrans_response,
-            //     is_proses: false,
-            //     no_resi: "",
-            //     is_selesai: false
-            // };
-            // var payload = JSON.stringify(obj);
-            // console.log("payload createPesanan");
-            // console.log(payload);
-
-            // var config = {
-            //     method: "post",
-            //     url: `${api_url}/pesanan/create`,
-            //     headers: {
-            //         "Content-Type": "application/json",
-            //     },
-            //     data: payload,
-            // };
-            // try {
-            //     const resp = await axios(config);
-            //     const data = await resp.data;
-            //     console.log(data);
-            // } catch (error) {
-            //     console.error(`Axios error..: ${error}`);
-            // }
-
+            
         });
     }
 
@@ -349,6 +319,8 @@ function Checkouts() {
             console.log("midtrans_res from localStorage");
             console.log(midtrans_res);
             console.log(get_midtrans_res);
+
+            // harusnya dibatalin aja bukan dipake
             return midtrans_res
         }
 
