@@ -235,6 +235,18 @@ function Checkouts() {
 
     async function buatPesanan() {
 
+        const bayar_midtrans = bayarMidtrans();
+        bayar_midtrans.then((val) => {
+            console.log("val dari bayar_midtrans");
+            console.log(val);
+
+            
+
+        });
+    }
+
+    async function bayarMidtrans() {
+
         let r = (Math.random() + 1).toString(36).substring(7);
         // console.log("random", r.toUpperCase());
 
@@ -249,7 +261,7 @@ function Checkouts() {
         const customer_details = {
             "email": userInfo.email,
             "first_name": userInfo.nama,
-            "last_name": userInfo.nama,
+            "last_name": '',
             "phone": userInfo.alamat[0].nomor_hp
         }
 
@@ -261,10 +273,10 @@ function Checkouts() {
                 "price": cartSelectedDetails[i].product_details.harga,
                 "quantity": cartSelectedDetails[i].jumlah,
                 "name": cartSelectedDetails[i].product_details.nama
-            } 
-            item_details.push(obj)  
-        }    
-        
+            }
+            item_details.push(obj)
+        }
+
         console.log("kurirSelected");
         console.log(kurirSelected);
         const kurirSelected_parse = JSON.parse(kurirSelected)
@@ -277,7 +289,7 @@ function Checkouts() {
             "name": kurirSelected_parse.service
         }
         item_details.push(obj_ks)
-        
+
 
         const payload = {
             "payment_type": "bank_transfer",
@@ -304,6 +316,24 @@ function Checkouts() {
             },
             data: data
         };
+
+        try {
+            const resp = await axios(config);
+            const data = await resp.data;
+            // console.log(data);
+            const midtrans_response = data.data;
+            console.log("midtrans_response");
+            console.log(midtrans_response);
+
+            return midtrans_response
+        } catch (error) {
+            console.error(`Axios error..: ${error}`);
+
+            const array = [{
+                "message": `Axios error..: ${error}`
+            }]
+            return array
+        }
     }
 
     return (
