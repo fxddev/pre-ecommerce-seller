@@ -9,6 +9,33 @@ const pb = new PocketBase('https://ecommerce.choniki.tk');
 
 function Products() {
 
+    const navigate = useNavigate();
+
+    const is_valid = pb.authStore.isValid
+    
+    let id_user
+
+    useEffect(() => {
+        if (is_valid) {
+            id_user = pb.authStore.model.id
+        } else {
+            navigate("/join");
+        }
+
+        getProducts()
+        // getCartsById()
+    }, []);
+
+    const [products, setProducts] = useState([]);
+    async function getProducts() {
+        const records = await pb.collection('products').getFullList(200 /* batch size */, {
+            sort: '-created',
+        });
+        console.log(records);
+
+        setProducts(records)
+    }
+
     return (
         <div>
             <button>Tambah product</button>
@@ -23,22 +50,20 @@ function Products() {
                         <th>Aktif</th>
                         <th>Action</th>
                     </tr>
-                    <tr>
-                        <td><input type="checkbox" /></td>
-                        <td>Smith</td>
-                        <td>50</td>
-                        <td>50</td>
-                        <td>50</td>
-                        <td>50</td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" /></td>
-                        <td>Smith</td>
-                        <td>50</td>
-                        <td>50</td>
-                        <td>50</td>
-                        <td>50</td>
-                    </tr>
+                    {products.map((p, i) => (
+                        <tr key={i}>
+                            <td><input type="checkbox" /></td>
+                            <td>{p.nama}</td>
+                            <td>{p.harga}</td>
+                            <td>{p.stock}</td>
+                            <td>{p.status}</td>
+                            <td>
+                                <button>Edit </button>
+                                <button>Hapus</button>
+                            </td>
+                        </tr>
+                    ))}
+
                 </table>
             </div>
         </div>
