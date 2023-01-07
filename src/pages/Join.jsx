@@ -7,15 +7,15 @@ const pb = new PocketBase('https://ecommerce.choniki.tk');
 function Join() {
     const navigate = useNavigate();
 
-    const [pembeliUsers, setPembeliUsers] = useState([]);
-    async function getAllPembeliUser() {
+    const [usersData, setUsersData] = useState([]);
+    async function getAllUser() {
         // fetch a paginated records list
         const resultList = await pb.collection('penjual').getFullList(200, {
             filter: 'created >= "2022-01-01 00:00:00"',
         });
         console.log(resultList);
 
-        setPembeliUsers(resultList)
+        setUsersData(resultList)
     }
 
     useEffect(() => {
@@ -23,30 +23,14 @@ function Join() {
             navigate("/");
         }
 
-        getAllPembeliUser()
-
-        // async function tes1() {
-        //     const user = await pb.collection("pembeli").getFirstListItem(`username="aryasury"`);
-        //     console.log(user);
-        // } 
-        // tes1()
-
-        // async function getAuth() {
-        //     const authData = await pb.admins.authWithPassword('admin@choniki.tk', 'Fahmid@ud2018');
-
-        //     // after the above you can also access the auth data from the authStore
-        //     console.log(pb.authStore.isValid);
-        //     console.log(pb.authStore.token);
-        //     console.log(pb.authStore.model.id);
-        // }
-        // getAuth()
+        getAllUser()
     }, []);
 
     pb.collection('penjual').subscribe('*', function (e) {
         console.log("relatime result dr e.record");
         console.log(e.record);
 
-        getAllPembeliUser()
+        getAllUser()
     });
 
     const [isUsernameFill, setIsUsernameFill] = useState(false);
@@ -62,12 +46,12 @@ function Join() {
             setIsUsernameFill(false)
         }
 
-        console.log(pembeliUsers);
+        console.log(usersData);
 
-        for (let i = 0; i < pembeliUsers.length; i++) {
-            console.log(pembeliUsers[i].username);
+        for (let i = 0; i < usersData.length; i++) {
+            console.log(usersData[i].username);
 
-            if (input_username === pembeliUsers[i].username) {
+            if (input_username === usersData[i].username) {
                 setIsTerdaftarViaUsername(true)
                 break;
             } else {
@@ -81,10 +65,10 @@ function Join() {
         let input_email = event.target.value
         setEmail(input_email)
 
-        for (let i = 0; i < pembeliUsers.length; i++) {
-            console.log(pembeliUsers[i].username);
+        for (let i = 0; i < usersData.length; i++) {
+            console.log(usersData[i].username);
 
-            if (input_email === pembeliUsers[i].email) {
+            if (input_email === usersData[i].email) {
                 setIsTerdaftarViaEmail(true)
                 break;
             } else {
