@@ -10,7 +10,7 @@ function Join() {
     const [pembeliUsers, setPembeliUsers] = useState([]);
     async function getAllPembeliUser() {
         // fetch a paginated records list
-        const resultList = await pb.collection('pembeli').getFullList(200, {
+        const resultList = await pb.collection('penjual').getFullList(200, {
             filter: 'created >= "2022-01-01 00:00:00"',
         });
         console.log(resultList);
@@ -42,7 +42,7 @@ function Join() {
         // getAuth()
     }, []);
 
-    pb.collection('pembeli').subscribe('*', function (e) {
+    pb.collection('penjual').subscribe('*', function (e) {
         console.log("relatime result dr e.record");
         console.log(e.record);
 
@@ -109,12 +109,12 @@ function Join() {
 
             let authData
             if (isTerdaftarViaUsername) {
-                authData = await pb.collection('pembeli').authWithPassword(
+                authData = await pb.collection('penjual').authWithPassword(
                     username,
                     password,
                 );
             } else {
-                authData = await pb.collection('pembeli').authWithPassword(
+                authData = await pb.collection('penjual').authWithPassword(
                     email,
                     password,
                 );
@@ -145,12 +145,12 @@ function Join() {
             };
             console.log(data);
 
-            const record = await pb.collection('pembeli').create(data);
+            const record = await pb.collection('penjual').create(data);
 
             console.log("record");
             console.log(record);
 
-            const authData = await pb.collection('pembeli').authWithPassword(
+            const authData = await pb.collection('penjual').authWithPassword(
                 username,
                 password,
             );
