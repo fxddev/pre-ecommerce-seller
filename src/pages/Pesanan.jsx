@@ -175,7 +175,7 @@ function Pesanan() {
                                         <p>NoResi : {p.no_resi}</p>
 
                                         {p.alamat_tujuan.map((pat, index) => {
-                                            return <p>Alamat : {pat.nama} {pat.alamat.nomor_hp} {pat.alamat.alamat}</p>
+                                            return <p>Alamats : {pat.nama} {pat.alamat.nomor_hp} {pat.alamat.alamat}</p>
                                         })}
                                         
                                     </div>
