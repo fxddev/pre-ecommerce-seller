@@ -168,7 +168,7 @@ function Pesanan() {
                                     <p>{p.midtrans_response.gross_amount}</p>
 
                                     {/* https://codeshack.io/pure-css3-modal-example/ */}
-                                    <input type="checkbox" id={p.id} />
+                                    <input type="checkbox" className='' id={p.id} />
                                     <label for={p.id} className="example-label">Detail</label>
                                     <label for={p.id} className="modal-background"></label>
                                     <div className="modal">
