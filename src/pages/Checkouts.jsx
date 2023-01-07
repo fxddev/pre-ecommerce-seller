@@ -274,16 +274,22 @@ function Checkouts() {
             const obj_ks = {
                 "name": `${kurirSelected_parse.code.toUpperCase()} ${kurirSelected_parse.service}`,
                 "price": parseInt(kurirSelected_parse.value),
-                "quantity": 1,
-                "name": kurirSelected_parse.service
+                "etd": kurirSelected_parse.etd
             }
             kurir = obj_ks
+
+            const alamat_tujuan = [
+                {
+                  "nama": userInfo.nama,
+                  "alamat": userInfo.alamat[0]
+                }
+              ]
 
             const data = {
                 "id_pembeli": userInfo.id,
                 "product_details": product_details,
                 "kurir": kurir,
-                "alamat_tujuan": userInfo.alamat[0],
+                "alamat_tujuan": alamat_tujuan,
                 "midtrans_response": midtrans_response,
                 "is_proses": false,
                 "no_resi": "",

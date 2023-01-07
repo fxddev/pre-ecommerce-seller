@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
-
 import PocketBase from 'pocketbase';
+
+import "../assets/modal.css"
 
 const pb = new PocketBase('https://ecommerce.choniki.tk');
 
@@ -106,8 +107,8 @@ function Pesanan() {
 
     return (
         <div>
-            {pesananById.map((p, index) => (
-                <div key={index}>
+            {pesananById.map((p, index) => {
+                return <div key={index}>
                     <div>
                         <div>
                             <h3>Belanja</h3>
@@ -132,7 +133,7 @@ function Pesanan() {
 
                             <button onClick={() => batalkanPesanan(p.id)}>Batalin</button>
                         </div>
-                        
+
                         <div>
                             <h3>{p.product_details.nama}</h3>
                             <p>{p.product_details.jumlah} barang</p>
@@ -141,11 +142,62 @@ function Pesanan() {
                         <div>
                             <h3>Total belanja</h3>
                             <p>{p.midtrans_response.gross_amount}</p>
-                            <button>Detail</button>
+
+                            {/* https://codeshack.io/pure-css3-modal-example/ */}
+                            <input type="checkbox" id={p.id} />
+                            <label for={p.id} className="example-label">Detail</label>
+                            <label for={p.id} className="modal-background"></label>
+                            <div className="modal">
+                                <div className="modal-header">
+                                    <h3>Modal Title</h3>
+                                    <label for={p.id}>
+                                        x
+                                    </label>
+                                </div>
+                                <div>
+                                    <div>
+                                        <p>{p.midtrans_response.order_id}</p>
+                                        <p>Tanggal pembelian {p.midtrans_response.transaction_time}</p>
+                                    </div>
+                                    <div>
+                                        <h3>Detail produk</h3>
+
+                                        {p.product_details.map((pd, index) => {
+                                            return <div key={index}>
+                                                <h3>{pd.nama}</h3>
+                                                <p>{pd.jumlah} x {pd.harga}</p>
+                                            </div>
+                                        })}
+                                    </div>
+                                    <div>
+                                        <h3>Info pengiriman</h3>
+                                        <p>Kurir : {p.kurir.name}</p>
+                                        <p>NoResi : {p.no_resi}</p>
+
+                                        {p.alamat_tujuan.map((pat, index) => {
+                                            return <p>Alamat : {pat.nama} {pat.alamat.nomor_hp} {pat.alamat.alamat}</p>
+                                        })}
+                                        
+                                    </div>
+                                    <div>
+                                        <h3>Rincian pembayaran</h3>
+
+                                        {p.product_details.map((pd, index) => {
+                                            return <p>Total harga ({pd.jumlah} barang) : {pd.harga * pd.jumlah}</p>
+                                        })}
+
+                                        <p>Total ongkos kirim : {p.kurir.price}</p>
+
+                                        <p>Total belanja : {p.midtrans_response.gross_amount}</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            ))}
+            })}
+
+
         </div>
     )
 }
