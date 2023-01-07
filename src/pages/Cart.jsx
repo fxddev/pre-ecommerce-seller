@@ -80,6 +80,7 @@ function Cart() {
 
             const obj = {
                 "id": cart_by_id[i].id,
+                "id_products": cart_by_id[i].id_products,
                 "product_details": record,
                 "id_pembeli": cart_by_id[i].id_pembeli,
                 "jumlah": cart_by_id[i].jumlah,
@@ -91,7 +92,7 @@ function Cart() {
 
             if (cart_by_id[i].is_selected) {
                 const harga = record.harga + total_harga
-                total_harga = harga                
+                total_harga = harga
             }
         }
         console.log("array dari getCartDetails");
@@ -107,6 +108,40 @@ function Cart() {
         console.log(total_harga);
         setTotalHarga(total_harga)
 
+    }
+
+    async function handleJumlah(e, idCart) {
+        const jumlah_new = e.target.value
+        console.log(jumlah_new);
+        console.log(idCart);
+
+        let array = []
+        console.log(cartDetails);
+        for (let i = 0; i < cartDetails.length; i++) {
+            if (cartDetails[i].id == idCart) {
+                const obj = {
+                    "id": cartDetails[i].id,
+                    "id_products": cartDetails[i].id_products,
+                    "product_details": cartDetails[i].product_details,
+                    "id_pembeli": cartDetails[i].id_pembeli,
+                    "jumlah": jumlah_new,
+                    "is_selected": cartDetails[i].is_selected
+                }
+                array.push(obj)
+
+                const data = {
+                    "id_products": cartDetails[i].id_products,
+                    "id_pembeli": cartDetails[i].id_pembeli,
+                    "jumlah": jumlah_new,
+                    "is_selected": cartDetails[i].is_selected
+                };
+                
+                const record = await pb.collection('keranjang').update(idCart, data);
+            } else {
+                array.push(cartDetails[i])
+            }
+        }
+        setCartDetails(array)
     }
 
     async function handleCheckbox(id_cart) {
@@ -149,7 +184,9 @@ function Cart() {
 
                         <h3>{cart.product_details.nama}</h3>
                         <p>{cart.product_details.harga}</p>
-                        <input type="number" value={cart.jumlah} />
+
+                        {/* https://stackoverflow.com/questions/68256270/react-map-method-render-input-dynamically-change-value-separate-fields */}
+                        <input type="number" value={cart.jumlah} onChange={(e) => handleJumlah(e, cart.id)} />
                     </div>
                 ))}
             </div>
