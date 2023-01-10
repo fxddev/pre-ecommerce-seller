@@ -165,6 +165,10 @@ function Products() {
         setStatus(obj.status)
     }
 
+    function handleStatusRadioBtn(e) {
+        
+    }
+
     async function updateProduct() {
         console.log(`sdg update product = ${idProduct}`);
 
@@ -191,7 +195,7 @@ function Products() {
             "status": status_bool
         };
         console.log(data);
-        
+
         const record = await pb.collection('products').update(idProduct, data);
         window.location.reload(false);
     }
@@ -229,24 +233,13 @@ function Products() {
                         </>
                     }
 
-                    {kondisi}
                     {isEdit &&
                         <>
-                            {kondisi === "baru" ?
-                                <>
-                                    <input type="radio" id="baru" value="baru" checked onChange={e => setKondisi(e.target.value)} />
-                                    <label htmlFor="baru">Baru</label><br />
-                                    <input type="radio" id="bekas" value="bekas" onChange={e => setKondisi(e.target.value)} />
-                                    <label htmlFor="bekas">Bekas</label><br />
-                                </>
-                                :
-                                <>
-                                    <input type="radio" id="baru" value="baru" onChange={e => setKondisi(e.target.value)} />
-                                    <label htmlFor="baru">Baru</label><br />
-                                    <input type="radio" id="bekas" value="bekas" checked onChange={e => setKondisi(e.target.value)} />
-                                    <label htmlFor="bekas">Bekas</label><br />
-                                </>
-                            }
+                            <input type="radio" id="baru" value="baru"
+                                checked={kondisi === 'baru'} onChange={e => setKondisi(e.target.value)} />
+                            <label htmlFor="baru">Baru</label><br />
+                            <input type="radio" id="bekas" value="bekas" checked={kondisi === 'bekas'} onChange={e => setKondisi(e.target.value)} />
+                            <label htmlFor="bekas">Bekas</label><br />
                         </>
                     }
 
@@ -267,29 +260,18 @@ function Products() {
 
                     {isEdit &&
                         <>
-                            {status ?
-                                <>
-                                    <input type="radio" id="aktif" checked value="true" onChange={e => setStatus(e.target.value)} />
-                                    <label htmlFor="aktif">Aktif</label><br />
-                                    <input type="radio" id="noAktif" value="false" onChange={e => setStatus(e.target.value)} />
-                                    <label htmlFor="noAktif">Tidak Aktif</label><br />
-                                </>
-                                :
-                                <>
-                                    <input type="radio" id="aktif" value="true" onChange={e => setStatus(e.target.value)} />
-                                    <label htmlFor="aktif">Aktif</label><br />
-                                    <input type="radio" id="noAktif" value="false" checked onChange={e => setStatus(e.target.value)} />
-                                    <label htmlFor="noAktif">Tidak Aktif</label><br />
-                                </>
-                            }
+                            <input type="radio" id="aktif" checked={status === true} onChange={e => setStatus(true)} />
+                            <label htmlFor="aktif">Aktif</label><br />
+                            <input type="radio" id="noAktif" checked={status === false} onChange={e => setStatus(false)} />
+                            <label htmlFor="noAktif">Tidak Aktif</label><br />
                         </>
                     }
 
-                    {isEdit ? 
-                    <button onClick={updateProduct}>Update</button>
-                    : 
-                    <button onClick={addProduct}>Tambah</button>
-                }
+                    {isEdit ?
+                        <button onClick={updateProduct}>Update</button>
+                        :
+                        <button onClick={addProduct}>Tambah</button>
+                    }
                 </div>
             </div>
 
