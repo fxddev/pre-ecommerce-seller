@@ -11,11 +11,11 @@ const pb = new PocketBase('https://ecommerce.choniki.tk');
 import Join from "./pages/Join";
 import Home from "./pages/Home";
 import Products from "./pages/Products";
+import Pesanan from "./pages/Pesanan";
 
 
 import Cart from "./pages/Cart";
 import Checkouts from "./pages/Checkouts";
-import Pesanan from "./pages/Pesanan";
 import Profile from "./pages/Profile";
 
 function App() {
@@ -29,6 +29,7 @@ function App() {
     <BrowserRouter>
       <Link to='/'>Home </Link>
       <Link to='/products'>products </Link>
+      <Link to='/pesanan'>pesanan </Link>
 
       {pb.authStore.isValid == false ?
         <Link to='/join'>Join</Link>
