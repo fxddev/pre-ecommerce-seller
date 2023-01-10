@@ -107,10 +107,10 @@ function Products() {
             "diskon": 0
         }
 
-        let status_bool = true
-        if (status != "true") {
-            status_bool = false
-        }
+        // let status_bool = true
+        // if (status != "true") {
+        //     status_bool = false
+        // }
 
         const data = {
             "nama": nama,
@@ -122,7 +122,7 @@ function Products() {
             "berat": parseInt(berat),
             "stock": parseInt(stock),
             "id_penjual": pb.authStore.model.id,
-            "status": status_bool
+            "status": status
         };
         console.log(data);
 
@@ -165,10 +165,6 @@ function Products() {
         setStatus(obj.status)
     }
 
-    function handleStatusRadioBtn(e) {
-        
-    }
-
     async function updateProduct() {
         console.log(`sdg update product = ${idProduct}`);
 
@@ -177,10 +173,10 @@ function Products() {
             "diskon": 0
         }
 
-        let status_bool = true
-        if (status != "true") {
-            status_bool = false
-        }
+        // let status_bool = true
+        // if (status != "true") {
+        //     status_bool = false
+        // }
 
         const data = {
             "nama": nama,
@@ -192,7 +188,7 @@ function Products() {
             "berat": parseInt(berat),
             "stock": parseInt(stock),
             "id_penjual": idPenjual,
-            "status": status_bool
+            "status": status
         };
         console.log(data);
 
